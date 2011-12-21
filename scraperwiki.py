@@ -13,7 +13,21 @@ def scrape(url, params=None):
 
 
 class sqlite1:
-    def save(self, data=[], unique_keys=[]):
+    def save(self, data=[], unique_keys=[], table_name='', verbose=2):
         pprint(data)
 
+    def execute(self, query):
+        pass
+
+    def select(self, query):
+        pass
+
+
+class utils1:
+    def swimport(self, module):
+        import utils
+        return utils
+
+
 sqlite = sqlite1()
+utils = utils1()
