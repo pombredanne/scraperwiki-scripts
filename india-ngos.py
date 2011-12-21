@@ -17,8 +17,8 @@ def get_states():
     return [link.get('href').split("'")[1] for link in links]
 
 
-def get_ngo_urls(states):
-    ngos = []
+def get_ngos(states):
+    ngos = set()
     for state in states:
         url = 'http://ngo.india.gov.in/state_ngolist_ngo.php?records=99999&state_value=' + state
         print "Processing", url
@@ -26,7 +26,7 @@ def get_ngo_urls(states):
         root = lxml.html.fromstring(html)
         assert 'view_ngo' in html
         links = root.cssselect('a[href*=view_ngo]') # NGOs have view_ngo in href
-        ngos.extend([link.get('href').split("'")[1] for link in links])
+        ngos.update([link.get('href').split("'")[1] for link in links])
     return ngos
 
 
@@ -55,11 +55,16 @@ def get_ngo_details(ngo):
     utils.save(rec)
 
 
+def existing_ngos():
+    crawled = scraperwiki.sqlite.select("ngo_id from swdata") or []
+    return set(rec['ngo_id'] for rec in crawled)
+
+
 @utils.clear_cache
 def main():
     states = get_states()
-    ngos = get_ngo_urls(states)
-    for ngo in sorted(set(ngos)):
+    ngos_to_crawl = get_ngos(states) - existing_ngos()
+    for ngo in sorted(ngos_to_crawl):
         get_ngo_details(ngo)
 
 
