@@ -5,6 +5,7 @@ import scraperwiki
 import lxml.html
 
 utils = scraperwiki.utils.swimport("utils")
+utils.save.unique_keys = ['ngo_id']
 
 
 def get_states():
@@ -51,7 +52,7 @@ def get_ngo_details(ngo):
         if name and value:
             rec[name] = value
 
-    utils.save(rec, ['ngo_id'])
+    utils.save(rec)
 
 
 @utils.clear_cache

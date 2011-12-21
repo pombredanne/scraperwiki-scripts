@@ -4,6 +4,7 @@ import scraperwiki
 import lxml.html
 
 utils = scraperwiki.utils.swimport("utils")
+utils.save.unique_keys = ['award_code', 'year', 'awardee_name']
 
 base_url = 'http://india.gov.in/myindia/'
 awards = dict()
@@ -32,7 +33,6 @@ def get_awardees(award):
         if not items:
             break
 
-        data = []
         for item in items:
             rec = dict()
             meta = item.cssselect('span')[0]
@@ -46,9 +46,8 @@ def get_awardees(award):
             rec['year'] = meta_data[-2]
             if len(meta_data) == 3:
                 rec['area'] = meta_data[-3]
-            data.append(rec)
 
-        utils.save(data, ['award_code', 'year', 'awardee_name'])
+            utils.save(rec)
 
 
 @utils.clear_cache

@@ -1,6 +1,7 @@
 """Common utils that I use in my ScraperWiki scripts
 """
 
+import atexit
 import sys
 import re
 from datetime import datetime
@@ -9,6 +10,8 @@ import scraperwiki
 scraperwiki.sqlite.execute("create table if not exists visited(url)")
 visited = scraperwiki.sqlite.select("* from visited") or []
 visited = set(rec['url'] for rec in visited)
+
+batch_size = 100
 
 
 # Used to save current state if CPU time exceeds
@@ -76,9 +79,15 @@ def clean(data):
     return cleaned_data
 
 
-def save(data, unique_keys, **kwargs):
-    if type(data) == dict:
-        data = clean(data)
-    else:
-        data = [clean(d) for d in data]
-    scraperwiki.sqlite.save(unique_keys=unique_keys, data=data, verbose=0, **kwargs)
+def save(rec=None, flush=False, **kwargs):
+    if rec:
+        save.data.append(clean(rec))
+
+    if len(save.data) >= batch_size or flush:
+        scraperwiki.sqlite.save(unique_keys=save.unique_keys, data=save.data, verbose=0, **kwargs)
+        save.data = []
+
+
+save.data = []
+save.unique_keys = []
+atexit.register(save, flush=True)
