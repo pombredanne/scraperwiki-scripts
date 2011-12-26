@@ -22,9 +22,6 @@ def get_data(date):
         rows = table.cssselect('tr')
         headers = rows.pop(0)
         headers = [td.text_content() for td in headers.cssselect('td')]
-        if not rows:
-            print "Reached the end of available data"
-            sys.exit(0)
         for row in rows:
             cells = [td.text_content() for td in row.cssselect('td')]
             rec = dict(zip(headers, cells))
@@ -34,9 +31,8 @@ def get_data(date):
 
 @utils.clear_cache
 def main():
-    for x in range(1, 90):
-        date = datetime.datetime.today() - datetime.timedelta(days=x)
-        get_data(date.strftime('%d/%m/%Y'))
+    yesterday = datetime.datetime.today() - datetime.timedelta(days=1)
+    get_data(yesterday.strftime('%d/%m/%Y'))
 
 
 main()
