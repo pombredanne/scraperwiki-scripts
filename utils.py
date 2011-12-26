@@ -41,6 +41,9 @@ def clear_cache(fn):
 
 
 def clean_item(item):
+    if type(item) is datetime:
+        return item
+
     # Remove non-ascii characters
     item = unicode(item).encode("ascii", "ignore")
 

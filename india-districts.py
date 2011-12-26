@@ -38,7 +38,7 @@ def get_districts(state):
         rec['headquarters'] = cells[4]
 
         if row.cssselect('a'):
-            rec['official_website'] = row.cssselect('a')[0].get('href').split('id=')[-1]
+            rec['official_website'] = row.cssselect('a')[0].get('href').split('id=')[1]
 
         utils.save(rec)
 
